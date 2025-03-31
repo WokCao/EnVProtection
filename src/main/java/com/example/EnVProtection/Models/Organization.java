@@ -1,26 +1,24 @@
 package com.example.EnVProtection.Models;
 
-import com.example.EnVProtection.Enums.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "organizations")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class User {
+public class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @JsonIgnore
-    private String email;
+    private String name;
 
     @Column(nullable = false)
-    @JsonIgnore
-    private String password;
+    private String description;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 }
+
