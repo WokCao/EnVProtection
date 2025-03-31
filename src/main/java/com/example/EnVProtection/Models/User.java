@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "users")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -14,7 +16,6 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @JsonIgnore
     private String email;
 
     @Column(nullable = false)
@@ -23,4 +24,16 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private String fullName;
+    private String address;
+    private String phoneNumber;
+    private Integer age;
+
+    private String organizationName;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+    private String logo;
+    private String website;
+    private Date foundedDate;
 }
