@@ -20,10 +20,5 @@ public class OrganizationController {
     public List<Organization> getOrganizations() {
         return organizationService.getAllOrganizations();
     }
-
-    @PostMapping
-    public ResponseEntity<?> createOrganization(@RequestBody CreateOrganization organization) {
-        return organizationService.createOrganization(organization);
-    }
 }
 

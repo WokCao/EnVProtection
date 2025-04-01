@@ -9,8 +9,10 @@ import java.util.Date;
 
 @Entity
 @Table(name = "users")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class User {
+public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,17 +25,13 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(insertable = false, updatable = false)
     private Role role;
 
-    private String fullName;
+    protected String fullName;
     private String address;
     private String phoneNumber;
-    private Integer age;
 
-    private String organizationName;
-    @Column(columnDefinition = "TEXT")
-    private String description;
-    private String logo;
-    private String website;
-    private Date foundedDate;
+    @Column(nullable = false, updatable = false)
+    private Date createdAt = new Date();
 }

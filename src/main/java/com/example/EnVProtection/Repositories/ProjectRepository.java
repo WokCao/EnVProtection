@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByStatus(ProjectStatus status);
+
+    List<Project> findByHostOrganizationId(Long organizationId);
 }

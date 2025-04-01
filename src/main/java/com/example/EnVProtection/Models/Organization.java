@@ -1,24 +1,31 @@
 package com.example.EnVProtection.Models;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.Date;
 
 @Entity
-@Table(name = "organizations")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class Organization {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false, unique = true)
-    private String name;
-
-    @Column(nullable = false)
+@DiscriminatorValue("ORGANIZATION")
+@Getter @Setter @NoArgsConstructor @ToString(callSuper = true)
+public class Organization extends User {
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;
-}
+    @Column(nullable = false)
+    private String logo;
 
+    @Column
+    private String website;
+
+    @Column(nullable = false)
+    private Date foundedDate;
+}
