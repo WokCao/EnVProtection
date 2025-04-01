@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/projects")
@@ -60,8 +61,13 @@ public class ProjectController {
 //        }
 
         Project savedProject = projectService.createProject(project);
-        System.out.println(savedProject);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProject);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
+        Optional<Project> project = projectService.getProjectById(id);
+        return project.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
