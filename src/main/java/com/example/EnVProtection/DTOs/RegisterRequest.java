@@ -13,15 +13,14 @@ public class RegisterRequest {
     private String email;
     private String password;
     private Role role;
-
-    // Fields for volunteer
     private String fullName;
     private String address;
     private String phoneNumber;
+
+    // Fields for volunteer
     private Integer age;
 
     // Fields for organization
-    private String organizationName;
     private String description;
     private String logo;
     private String website;

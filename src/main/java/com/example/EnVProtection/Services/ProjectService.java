@@ -3,7 +3,7 @@ package com.example.EnVProtection.Services;
 import com.example.EnVProtection.Enums.ProjectStatus;
 import com.example.EnVProtection.Models.Organization;
 import com.example.EnVProtection.Models.Project;
-import com.example.EnVProtection.Models.User;
+import com.example.EnVProtection.Models.Volunteer;
 import com.example.EnVProtection.Repositories.OrganizationRepository;
 import com.example.EnVProtection.Repositories.ProjectRepository;
 import com.example.EnVProtection.Repositories.VolunteerRepository;
@@ -15,10 +15,12 @@ import java.util.Optional;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final OrganizationRepository organizationRepository;
+    private final VolunteerRepository volunteerRepository;
 
-    public ProjectService(ProjectRepository projectRepository, OrganizationRepository organizationRepository) {
+    public ProjectService(ProjectRepository projectRepository, OrganizationRepository organizationRepository, VolunteerRepository volunteerRepository) {
         this.projectRepository = projectRepository;
         this.organizationRepository = organizationRepository;
+        this.volunteerRepository = volunteerRepository;
     }
 
     public List<Project> getAllProjects() {
@@ -53,6 +55,16 @@ public class ProjectService {
         existingProject.setName(updatedProject.getName());
         existingProject.setBriefDescription(updatedProject.getBriefDescription());
         existingProject.setStatus(updatedProject.getStatus());
+        existingProject.setFullDescription(updatedProject.getFullDescription());
+        existingProject.setImpact(updatedProject.getImpact());
+        existingProject.setLocation(updatedProject.getLocation());
+        existingProject.setLatitude(updatedProject.getLatitude());
+        existingProject.setLongitude(updatedProject.getLongitude());
+        existingProject.setDate(updatedProject.getDate());
+        existingProject.setTime(updatedProject.getTime());
+        existingProject.setRequirements(updatedProject.getRequirements());
+        existingProject.setVolunteersNeeded(updatedProject.getVolunteersNeeded());
+        existingProject.setImage(updatedProject.getImage());
         return projectRepository.save(existingProject);
     }
 
@@ -60,11 +72,27 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
-    public Project joinProject(Long projectId, User volunteer) {
+    public Project joinProject(Long projectId, String email) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
+        Volunteer volunteer = volunteerRepository.findByEmail(email)
+                        .orElseThrow(() -> new RuntimeException("Volunteer not found"));
         project.getVolunteers().add(volunteer);
+        return projectRepository.save(project);
+    }
+
+    public Project quitProject(Long projectId, String email) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        Volunteer volunteer = volunteerRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Volunteer not found"));
+        if (project.getVolunteers().contains(volunteer)) {
+            project.getVolunteers().remove(volunteer);
+        } else {
+            throw new RuntimeException("Volunteer not enrolled in the project");
+        }
         return projectRepository.save(project);
     }
 }

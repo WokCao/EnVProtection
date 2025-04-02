@@ -20,12 +20,12 @@ public class Organization extends User {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
+    @Column
     private String logo;
 
     @Column
     private String website;
 
-    @Column(nullable = false)
+    @Column
     private Date foundedDate;
 }

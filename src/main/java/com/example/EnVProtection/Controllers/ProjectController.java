@@ -2,9 +2,8 @@ package com.example.EnVProtection.Controllers;
 
 import com.example.EnVProtection.Enums.ProjectStatus;
 import com.example.EnVProtection.Models.Project;
-import com.example.EnVProtection.Models.User;
-import com.example.EnVProtection.Repositories.VolunteerRepository;
 import com.example.EnVProtection.Services.ProjectService;
+import com.example.EnVProtection.Utils.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +15,11 @@ import java.util.Optional;
 @RequestMapping("/api/v1/projects")
 public class ProjectController {
     private final ProjectService projectService;
+    private final JwtUtil jwtUtil;
 
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService, JwtUtil jwtUtil) {
         this.projectService = projectService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
@@ -83,8 +84,17 @@ public class ProjectController {
     }
 
     @PostMapping("/{id}/join")
-    public Project joinProject(@PathVariable Long id, @RequestBody User user) {
-        return projectService.joinProject(id, user);
+    public Project joinProject(@PathVariable Long id, @RequestHeader("Authorization") String originString) {
+        String token = originString.replace("Bearer ", "");
+        String email = jwtUtil.extractClaims(token).getSubject();
+        return projectService.joinProject(id, email);
+    }
+
+    @PostMapping("/{id}/quit")
+    public Project quitProject(@PathVariable Long id, @RequestHeader("Authorization") String originString) {
+        String token = originString.replace("Bearer ", "");
+        String email = jwtUtil.extractClaims(token).getSubject();
+        return projectService.quitProject(id, email);
     }
 }
 
