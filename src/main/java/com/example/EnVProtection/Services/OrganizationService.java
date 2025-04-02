@@ -20,5 +20,9 @@ public class OrganizationService {
     public List<Organization> getAllOrganizations() {
         return organizationRepository.findAll();
     }
+
+    public Optional<Organization> getOrganizationById(Long id) {
+        return organizationRepository.findById(id);
+    }
 }
 
