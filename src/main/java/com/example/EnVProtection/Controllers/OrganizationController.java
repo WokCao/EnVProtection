@@ -62,9 +62,30 @@ public class OrganizationController {
             }
         }));
 
+        Long activeProjects = projectList.stream()
+                .filter(p -> p.getStatus() == ProjectStatus.IN_PROGRESS || p.getStatus() == ProjectStatus.UPCOMING)
+                .count();
+
         map.put("organization", organization);
-        map.put("project", projectList);
+        map.put("activeProjects", activeProjects);
+        map.put("project", projectList.subList(0, 4));
         map.put("volunteers", sum[0]);
+
+        return ResponseEntity.ok(map);
+    }
+
+    @GetMapping("/{id}/projects")
+    public ResponseEntity<?> getOrganizationProjects(@PathVariable("id") Long id) {
+        Optional<Organization> optionalOrganization = organizationService.getOrganizationById(id);
+
+        if (optionalOrganization.isEmpty()) return ResponseEntity.notFound().build();
+
+        Map<String, Object> map = new HashMap<>();
+        Organization organization = optionalOrganization.get();
+
+        List<Project> projectList = projectService.getProjectsByOrganization(organization.getId());
+        map.put("organization", organization);
+        map.put("projects", projectList);
 
         return ResponseEntity.ok(map);
     }

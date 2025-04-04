@@ -8,8 +8,11 @@ import com.example.EnVProtection.Repositories.OrganizationRepository;
 import com.example.EnVProtection.Repositories.ProjectRepository;
 import com.example.EnVProtection.Repositories.VolunteerRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -32,7 +35,20 @@ public class ProjectService {
     }
 
     public List<Project> getProjectsByOrganization(Long organizationId) {
-        return projectRepository.findByHostOrganizationId(organizationId);
+        return sortProjects(projectRepository.findByHostOrganizationId(organizationId));
+    }
+
+    private List<Project> sortProjects(List<Project> projectList) {
+        return projectList.stream()
+                .sorted(Comparator.comparing(Project::getStatus, Comparator.comparingInt(status -> {
+                            if (status == ProjectStatus.IN_PROGRESS) return 0;
+                            if (status == ProjectStatus.UPCOMING) return 1;
+                            return 2;
+                        }))
+                        .thenComparing(Project::getDate)
+                        .thenComparing(Project::getTime)
+                        .thenComparing(Comparator.comparingLong(Project::getCurrentNumberVolunteers).reversed()))
+                .collect(Collectors.toList());
     }
 
     public Optional<Project> getProjectById(Long id) {

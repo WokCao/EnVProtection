@@ -51,7 +51,7 @@ public class Project {
     @ElementCollection
     private List<String> requirements;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String impact;
 
     @Column(nullable = false)
@@ -68,5 +68,9 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name = "volunteer_id")
     )
     private Set<User> volunteers = new HashSet<>();
+
+    public Long getCurrentNumberVolunteers() {
+        return (long) this.volunteers.size();
+    }
 }
 
