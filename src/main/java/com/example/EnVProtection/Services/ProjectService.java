@@ -3,6 +3,7 @@ package com.example.EnVProtection.Services;
 import com.example.EnVProtection.Enums.ProjectStatus;
 import com.example.EnVProtection.Models.Organization;
 import com.example.EnVProtection.Models.Project;
+import com.example.EnVProtection.Models.User;
 import com.example.EnVProtection.Models.Volunteer;
 import com.example.EnVProtection.Repositories.OrganizationRepository;
 import com.example.EnVProtection.Repositories.ProjectRepository;
@@ -13,6 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class ProjectService {
@@ -48,7 +51,7 @@ public class ProjectService {
                         .thenComparing(Project::getDate)
                         .thenComparing(Project::getTime)
                         .thenComparing(Comparator.comparingLong(Project::getCurrentNumberVolunteers).reversed()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public Optional<Project> getProjectById(Long id) {
@@ -110,6 +113,17 @@ public class ProjectService {
             throw new RuntimeException("Volunteer not enrolled in the project");
         }
         return projectRepository.save(project);
+    }
+
+    public List<Project> getVolunteerProjects(Long volunteerId) {
+        Optional<User> optionalUser = volunteerRepository.findById(volunteerId);
+        if (optionalUser.isEmpty()) return null;
+
+        Volunteer volunteer = (Volunteer) (optionalUser.get());
+
+        return projectRepository.findAll().stream().filter(
+                project -> project.getVolunteers().contains(volunteer) && (project.getStatus() == ProjectStatus.IN_PROGRESS || project.getStatus() == ProjectStatus.UPCOMING)
+        ).toList();
     }
 }
 

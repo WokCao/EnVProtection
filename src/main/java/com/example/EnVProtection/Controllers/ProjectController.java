@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -95,6 +97,15 @@ public class ProjectController {
         String token = originString.replace("Bearer ", "");
         String email = jwtUtil.extractClaims(token).getSubject();
         return projectService.quitProject(id, email);
+    }
+
+    @GetMapping("/volunteer/{id}")
+    public ResponseEntity<?> getVolunteerProjects(@PathVariable Long id) {
+        List<Project> projectList = projectService.getVolunteerProjects(id);
+        Map<String, Object> map = new HashMap<>();
+        map.put("projects", projectList.stream().limit(5));
+        map.put("size", projectList.size());
+        return ResponseEntity.ok(map);
     }
 }
 
